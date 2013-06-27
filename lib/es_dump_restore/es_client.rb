@@ -7,10 +7,11 @@ module EsDumpRestore
     attr_accessor :base_uri
     attr_accessor :index_name
 
-    def initialize(base_uri, index_name)
+    def initialize(base_uri, index_name, type)
       @httpclient = HTTPClient.new
       @index_name = index_name
-      @base_uri = URI.parse(base_uri + "/" + index_name + "/")
+
+      @base_uri = type.nil? ? URI.parse(base_uri + "/" + index_name + "/") : URI.parse(base_uri + "/" + index_name + "/" + type + "/")
     end
 
     def mappings

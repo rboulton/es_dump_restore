@@ -15,11 +15,11 @@ series of commands to be sent to the ElasticSearch bulk API.
 
 To dump an ElasticSearch index to a file:
 
-    es_dump_restore dump ELASTIC_SEARCH_SERVER_URL INDEX_NAME DESTINATION_FILE
+    es_dump_restore dump ELASTIC_SEARCH_SERVER_URL INDEX_NAME DESTINATION_FILE_ZIP
 
 To restore an index to an ElasticSearch server:
 
-    es_dump_restore restore ELASTIC_SEARCH_SERVER_URL DESTINATON_INDEX FILENAME
+    es_dump_restore restore ELASTIC_SEARCH_SERVER_URL DESTINATON_INDEX FILENAME_ZIP
 
 ## Contributing
 
