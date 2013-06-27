@@ -17,6 +17,10 @@ To dump an ElasticSearch index to a file:
 
     es_dump_restore dump ELASTIC_SEARCH_SERVER_URL INDEX_NAME DESTINATION_FILE_ZIP
 
+To dump an ElasticSearch index by type to a file:
+
+    es_dump_restore dump ELASTIC_SEARCH_SERVER_URL INDEX_NAME TYPE DESTINATION_FILE_ZIP
+
 To restore an index to an ElasticSearch server:
 
     es_dump_restore restore ELASTIC_SEARCH_SERVER_URL DESTINATON_INDEX FILENAME_ZIP
