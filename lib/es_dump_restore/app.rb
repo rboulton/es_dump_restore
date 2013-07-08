@@ -59,7 +59,7 @@ module EsDumpRestore
 
     desc "restore URL INDEX_NAME FILENAME", "Restores a dumpfile into the given ElasticSearch index"
     def restore(url, index_name, filename)
-      client = EsClient.new(url, index_name)
+      client = EsClient.new(url, index_name, nil)
 
       Dumpfile.read(filename) do |dumpfile|
         client.create_index(dumpfile.index)
