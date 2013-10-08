@@ -20,6 +20,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'multi_json'
   gem.add_dependency 'httpclient'
   gem.add_dependency 'thor'
-  gem.add_dependency 'rubyzip'
+  gem.add_dependency 'rubyzip', ">= 1.0.0"
   gem.add_dependency 'progress_bar'
 end

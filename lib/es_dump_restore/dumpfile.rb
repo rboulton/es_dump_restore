@@ -1,10 +1,10 @@
-require 'zip/zip'
+require 'zip'
 require 'multi_json'
 
 module EsDumpRestore
-  class Dumpfile < Zip::ZipFile
+  class Dumpfile < Zip::File
     def self.write(filename, &block)
-      df = Dumpfile.new(filename, Zip::ZipFile::CREATE)
+      df = Dumpfile.new(filename, Zip::File::CREATE)
       begin
         yield df
       ensure
