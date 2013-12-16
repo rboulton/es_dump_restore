@@ -34,8 +34,13 @@ module EsDumpRestore
 
     def each_scroll_hit(scroll_id, &block)
       loop do
-        batch = request(:get, '/_search/scroll', query: { scroll: '10m', scroll_id: scroll_id })
-        hits = batch["hits"]["hits"]
+        batch = request(:get, '/_search/scroll', query: {
+          scroll: '10m', scroll_id: scroll_id
+        })
+
+        batch_hits = batch["hits"]
+        break if batch_hits.nil?
+        hits = batch_hits["hits"]
         break if hits.empty?
 
         hits.each do |hit|
