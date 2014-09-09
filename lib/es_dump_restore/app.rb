@@ -21,13 +21,13 @@ module EsDumpRestore
 
         client.start_scan do |scroll_id, total|
           dumpfile.num_objects = total
-          bar = ProgressBar.new(total) if !options[:noprogressbar]
+          bar = ProgressBar.new(total) unless options[:noprogressbar]
 
           dumpfile.get_objects_output_stream do |out|
             client.each_scroll_hit(scroll_id) do |hit|
               metadata = { index: { _type: hit["_type"], _id: hit["_id"] } }
               out.write("#{MultiJson.dump(metadata)}\n#{MultiJson.dump(hit["_source"])}\n")
-              bar.increment! if !options[:noprogressbar]
+              bar.increment! unless options[:noprogressbar]
             end
           end
         end
@@ -46,13 +46,13 @@ module EsDumpRestore
 
         client.start_scan do |scroll_id, total|
           dumpfile.num_objects = total
-          bar = ProgressBar.new(total) if !options[:noprogressbar]
+          bar = ProgressBar.new(total) unless options[:noprogressbar]
 
           dumpfile.get_objects_output_stream do |out|
             client.each_scroll_hit(scroll_id) do |hit|
               metadata = { index: { _type: hit["_type"], _id: hit["_id"] } }
               out.write("#{MultiJson.dump(metadata)}\n#{MultiJson.dump(hit["_source"])}\n")
-              bar.increment! if !options[:noprogressbar]
+              bar.increment! unless options[:noprogressbar]
             end
           end
         end
@@ -66,10 +66,10 @@ module EsDumpRestore
       Dumpfile.read(filename) do |dumpfile|
         client.create_index(dumpfile.index)
 
-        bar = ProgressBar.new(dumpfile.num_objects) if !options[:noprogressbar]
+        bar = ProgressBar.new(dumpfile.num_objects) unless options[:noprogressbar]
         dumpfile.scan_objects(1000) do |batch, size|
           client.bulk_index batch
-          bar.increment!(size) if !options[:noprogressbar]
+          bar.increment!(size) unless options[:noprogressbar]
         end
       end
     end
