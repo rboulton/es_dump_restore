@@ -8,6 +8,7 @@ module EsDumpRestore
   class App < Thor
     
     option :noprogressbar, :type => :boolean # switch for showing progress bar
+    option :verbose, :type => :boolean # add some additional output
 
     desc "dump URL INDEX_NAME FILENAME", "Creates a dumpfile based on the given ElasticSearch index"
     def dump(url, index_name, filename)

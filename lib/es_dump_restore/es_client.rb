@@ -11,19 +11,20 @@ module EsDumpRestore
       @httpclient = HTTPClient.new
       @index_name = index_name
 
-      @base_uri = type.nil? ? URI.parse(base_uri + "/" + index_name + "/") : URI.parse(base_uri + "/" + index_name + "/" + type + "/")
+      @es_uri = base_uri
+      @path_prefix = type.nil? ? index_name : index_name + "/" + type
     end
 
     def mappings
-      request(:get, '_mapping')[index_name]
+      request(:get, "#{@path_prefix}/_mapping")[index_name]
     end
 
     def settings
-      request(:get, '_settings')[index_name]
+      request(:get, "#{@path_prefix}/_settings")[index_name]
     end
 
     def start_scan(&block)
-      scroll = request(:get, '_search',
+      scroll = request(:get, "#{@path_prefix}/_search",
         query: { search_type: 'scan', scroll: '10m', size: 500 },
         body: MultiJson.dump({ query: { match_all: {} } }) )
       total = scroll["hits"]["total"]
@@ -34,9 +35,9 @@ module EsDumpRestore
 
     def each_scroll_hit(scroll_id, &block)
       loop do
-        batch = request(:get, '_search/scroll', query: {
+        batch = request(:get, '_search/scroll', {query: {
           scroll: '10m', scroll_id: scroll_id
-        })
+        }}, [404])
 
         batch_hits = batch["hits"]
         break if batch_hits.nil?
@@ -59,10 +60,19 @@ module EsDumpRestore
 
     private
 
-    def request(method, path, options={})
-      request_uri = @base_uri + path
-      response = @httpclient.request(method, request_uri, options)
-      MultiJson.load(response.content)
+    def request(method, path, options={}, extra_allowed_exitcodes=[])
+      request_uri = @es_uri + "/" + path
+      begin
+        response = @httpclient.request(method, request_uri, options)
+        unless response.ok? or extra_allowed_exitcodes.include? response.status
+          raise "Request failed with status #{response.status}: #{response.reason}"
+        end
+        MultiJson.load(response.content)
+      rescue Exception => e
+        puts "Exception caught issuing HTTP request to #{request_uri}"
+        puts "options: #{options}"
+        raise e
+      end
     end
   end
 end
