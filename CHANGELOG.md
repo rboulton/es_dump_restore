@@ -1,4 +1,8 @@
-# Version 0.0.9 - December 2, 2014
+# Version 0.0.10 - December 3, 2014
+
+* Fixes a bug introduced in 0.0.9 (thanks again to Noa Resare for the fix!)
+
+# Version 0.0.9 - December 2, 2014 - YANKED
 
 * Makes it possible to use ES instances not located at server root (thanks Noa Resare for the patch!)
 
