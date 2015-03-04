@@ -1,3 +1,7 @@
+# Version 0.0.11 - March 4, 2015
+
+* Make it possible to load on older versions of Ruby (thanks Alex Tomlins!)
+
 # Version 0.0.10 - December 3, 2014
 
 * Fixes a bug introduced in 0.0.9 (thanks again to Noa Resare for the fix!)
