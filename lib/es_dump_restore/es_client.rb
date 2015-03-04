@@ -65,7 +65,7 @@ module EsDumpRestore
       begin
         response = @httpclient.request(method, request_uri, options)
         unless response.ok? or extra_allowed_exitcodes.include? response.status
-          raise "Request failed with status #{response.status}: #{response.reason}"
+          raise "Request failed with status #{response.status}: #{response.reason}"
         end
         MultiJson.load(response.content)
       rescue Exception => e
