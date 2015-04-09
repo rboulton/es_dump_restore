@@ -64,11 +64,11 @@ module EsDumpRestore
     end
 
     def create_index(metadata)
-      request(:post, "", :body => MultiJson.dump(metadata))
+      request(:post, "#{@path_prefix}", :body => MultiJson.dump(metadata))
     end
 
     def bulk_index(data)
-      request(:post, "_bulk", :body => data)
+      request(:post, "#{@path_prefix}/_bulk", :body => data)
     end
 
     private
