@@ -42,6 +42,7 @@ module EsDumpRestore
     end
 
     def each_scroll_hit(scroll_id, &block)
+      done = 0
       loop do
         batch = request(:get, '_search/scroll', {query: {
           scroll: '10m', scroll_id: scroll_id
@@ -55,6 +56,10 @@ module EsDumpRestore
         hits.each do |hit|
           yield hit
         end
+
+        total = batch_hits["total"]
+        done += hits.size
+        break if done >= total
       end
     end
 
