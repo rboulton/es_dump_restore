@@ -1,4 +1,8 @@
-# Version 0.0.12 - April 10, 2015
+# Version 0.0.13 - April 10, 2015
+
+* Fix a regression introduced for ES version 0.90.x by the previous release (thanks again Richard Boulton!)
+
+# Version 0.0.12 - April 10, 2015 - YANKED
 
 * Handle null values for settings and mappings; useful in the case of trying to dump an alias (thanks Richard Boulton!)
 * Handle the case of ES losing the scroll context mid-dump (thanks again Richard Boulton!)
