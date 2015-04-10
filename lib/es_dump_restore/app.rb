@@ -75,5 +75,23 @@ module EsDumpRestore
       end
     end
 
+    desc "restore_alias URL ALIAS_NAME INDEX_NAME FILENAME", "Restores a dumpfile into the given ElasticSearch index, and then sets the alias to point at that index, removing any existing indexes pointed at by the alias"
+    def restore_alias(url, alias_name, index_name, filename)
+      client = EsClient.new(url, index_name, nil)
+      client.check_alias alias_name
+
+      Dumpfile.read(filename) do |dumpfile|
+        client.create_index(dumpfile.index)
+
+        bar = ProgressBar.new(dumpfile.num_objects) unless options[:noprogressbar]
+        dumpfile.scan_objects(1000) do |batch, size|
+          client.bulk_index batch
+          bar.increment!(size) unless options[:noprogressbar]
+        end
+      end
+
+      client.replace_alias_and_close_old_index alias_name
+    end
+
   end
 end
