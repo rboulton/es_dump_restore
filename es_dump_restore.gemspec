@@ -22,4 +22,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'thor'
   gem.add_dependency 'rubyzip', ">= 1.0.0"
   gem.add_dependency 'progress_bar'
+  gem.add_dependency 'rake'
 end
