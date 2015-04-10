@@ -1,3 +1,8 @@
+# Version 0.0.12 - April 10, 2015
+
+* Handle null values for settings and mappings; useful in the case of trying to dump an alias (thanks Richard Boulton!)
+* Handle the case of ES losing the scroll context mid-dump (thanks again Richard Boulton!)
+
 # Version 0.0.11 - March 4, 2015
 
 * Make it possible to load on older versions of Ruby (thanks Alex Tomlins!)
