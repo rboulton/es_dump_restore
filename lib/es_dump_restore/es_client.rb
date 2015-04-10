@@ -16,11 +16,19 @@ module EsDumpRestore
     end
 
     def mappings
-      request(:get, "#{@path_prefix}/_mapping")[index_name]
+      data = request(:get, "#{@path_prefix}/_mapping")
+      if data.values.size != 1 || data.values.first["mappings"].nil?
+        raise "Unexpected response: #{data}"
+      end
+      data.values.first["mappings"]
     end
 
     def settings
-      request(:get, "#{@path_prefix}/_settings")[index_name]
+      data = request(:get, "#{@path_prefix}/_settings")
+      if data.values.size != 1 || data.values.first["settings"].nil?
+        raise "Unexpected response: #{data}"
+      end
+      data.values.first["settings"]
     end
 
     def start_scan(&block)
@@ -34,6 +42,7 @@ module EsDumpRestore
     end
 
     def each_scroll_hit(scroll_id, &block)
+      done = 0
       loop do
         batch = request(:get, '_search/scroll', {query: {
           scroll: '10m', scroll_id: scroll_id
@@ -47,6 +56,10 @@ module EsDumpRestore
         hits.each do |hit|
           yield hit
         end
+
+        total = batch_hits["total"]
+        done += hits.size
+        break if done >= total
       end
     end
 
