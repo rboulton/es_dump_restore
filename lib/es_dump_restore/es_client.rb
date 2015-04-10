@@ -17,18 +17,28 @@ module EsDumpRestore
 
     def mappings
       data = request(:get, "#{@path_prefix}/_mapping")
-      if data.values.size != 1 || data.values.first["mappings"].nil?
+      if data.values.size != 1
         raise "Unexpected response: #{data}"
       end
-      data.values.first["mappings"]
+      mappings = data.values.first
+      if mappings["mappings"].nil?
+        mappings
+      else
+        mappings["mappings"]
+      end
     end
 
     def settings
       data = request(:get, "#{@path_prefix}/_settings")
-      if data.values.size != 1 || data.values.first["settings"].nil?
+      if data.values.size != 1
         raise "Unexpected response: #{data}"
       end
-      data.values.first["settings"]
+      settings = data.values.first
+      if settings["settings"].nil?
+        settings
+      else
+        settings["settings"]
+      end
     end
 
     def start_scan(&block)
