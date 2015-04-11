@@ -1,3 +1,9 @@
+# Version 1.0.0 - April 11, 2015
+
+* Add a `restore_alias` command, which performs a restore and switches an alias to point at the result (thanks Richard Boulton!)
+* Fixes a bug preventing index restoration on newer ES releases (thanks again Richard Boulton!)
+* Richard Boulton tells us he's used `es_dump_restore` to perform a migration on the www.gov.uk indexes, so we think it's high time we started calling this tool ready for prime time.  Announcing 1.0.0!
+
 # Version 0.0.13 - April 10, 2015
 
 * Fix a regression introduced for ES version 0.90.x by the previous release (thanks again Richard Boulton!)
