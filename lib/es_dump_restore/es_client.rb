@@ -74,11 +74,50 @@ module EsDumpRestore
     end
 
     def create_index(metadata)
-      request(:post, "", :body => MultiJson.dump(metadata))
+      request(:post, "#{@path_prefix}", :body => MultiJson.dump(metadata))
+    end
+
+    def check_alias(alias_name)
+      # Checks that it's possible to do an atomic restore using the given alias
+      # name.  This requires that:
+      #  - `alias_name` doesn't point to an existing index
+      #  - `index_name` doesn't point to an existing index
+      existing = request(:get, "_aliases")
+      if existing.include? index_name
+        raise "There is already an index called #{index_name}"
+      end
+      if existing.include? alias_name
+        raise "There is already an index called #{alias_name}"
+      end
+    end
+
+    def replace_alias_and_close_old_index(alias_name)
+      existing = request(:get, "_aliases")
+
+      # Response of the form:
+      #   { "index_name" => { "aliases" => { "a1" => {}, "a2" => {} } } }
+      old_aliased_indices = existing.select { |name, details|
+        details.fetch("aliases", {}).keys.include? alias_name
+      }
+      old_aliased_indices = old_aliased_indices.keys
+
+      # For any existing indices with this alias, remove the alias
+      # We would normally expect 0 or 1 such index, but several is
+      # valid too
+      actions = old_aliased_indices.map { |old_index_name|
+        { "remove" => { "index" => old_index_name, "alias" => alias_name } }
+      }
+
+      actions << { "add" => { "index" => index_name, "alias" => alias_name } }
+
+      request(:post, "_aliases", :body => MultiJson.dump({ "actions" => actions }))
+      old_aliased_indices.each do |old_index_name|
+        request(:post, "#{old_index_name}/_close")
+      end
     end
 
     def bulk_index(data)
-      request(:post, "_bulk", :body => data)
+      request(:post, "#{@path_prefix}/_bulk", :body => data)
     end
 
     private
@@ -88,12 +127,11 @@ module EsDumpRestore
       begin
         response = @httpclient.request(method, request_uri, options)
         unless response.ok? or extra_allowed_exitcodes.include? response.status
-          raise "Request failed with status #{response.status}: #{response.reason}"
+          raise "Request failed with status #{response.status}: #{response.reason} #{response.content}"
         end
         MultiJson.load(response.content)
       rescue Exception => e
         puts "Exception caught issuing HTTP request to #{request_uri}"
-        puts "options: #{options}"
         raise e
       end
     end
