@@ -1,3 +1,7 @@
+# Version 1.1.0 - May 12, 2015
+
+* Allow specifying additional index settings to the `restore` and `restore_alias` commands (thanks again Richard Boulton!)
+
 # Version 1.0.0 - April 11, 2015
 
 * Add a `restore_alias` command, which performs a restore and switches an alias to point at the result (thanks Richard Boulton!)
