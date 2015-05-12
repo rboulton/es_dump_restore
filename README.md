@@ -23,7 +23,30 @@ To dump an ElasticSearch index by type to a file:
 
 To restore an index to an ElasticSearch server:
 
-    es_dump_restore restore ELASTIC_SEARCH_SERVER_URL DESTINATON_INDEX FILENAME_ZIP
+    es_dump_restore restore ELASTIC_SEARCH_SERVER_URL DESTINATION_INDEX FILENAME_ZIP [SETTING_OVERRIDES]
+
+To restore an index and set an alias to point to it:
+
+    es_dump_restore restore_alias ELASTIC_SEARCH_SERVER_URL DESTINATION_ALIAS DESTINATION_INDEX FILENAME_ZIP [SETTING_OVERRIDES]
+
+This loads the dump into an index named `DESTINATION_INDEX`, and once the load
+is complete sets the alias `DESTINATION_ALIAS` to point to it.  If
+`DESTINATION_ALIAS` already exists, it will be atomically changed to point to
+the new location.  This allows a dump file to be loaded on a running server
+without disrupting searches going on on that server (as long as those searches
+are accessing the index via the alias).
+
+If `SETTING_OVERRIDES` is set for a restore command, it must be a valid
+serialised JSON object.  This will be merged with the settings in the dump
+file, allowing selected settings to be altered, but keeping any unspecified
+settings as they were in the dump file.  For example:
+
+    es_dump_restore restore_alias http://localhost:9200 test test-1276512 test_dump.zip '{"settings":{"index":{"number_of_replicas":"0","number_of_shards":"1"}}'
+
+would read the dump file `test_dump.zip`, load it into an index called
+`test-1276512`, then set the alias `test` to point to this index.  The index
+would be set to have no replicas, and only 1 shard, but have all other settings
+from the dump file.
 
 ## Contributing
 

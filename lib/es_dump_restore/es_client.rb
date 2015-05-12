@@ -73,7 +73,11 @@ module EsDumpRestore
       end
     end
 
-    def create_index(metadata)
+    def create_index(metadata, overrides)
+      if overrides
+        overrides = MultiJson.load(overrides)
+        metadata = deep_merge(metadata, overrides)
+      end
       request(:post, "#{@path_prefix}", :body => MultiJson.dump(metadata))
     end
 
@@ -134,6 +138,17 @@ module EsDumpRestore
         puts "Exception caught issuing HTTP request to #{request_uri}"
         raise e
       end
+    end
+
+    def deep_merge(hash1, hash2)
+      merger = proc { |key, v1, v2|
+        if Hash === v1 && Hash === v2
+          v1.merge(v2, &merger)
+        else
+          v2
+        end
+      }
+      hash1.merge(hash2, &merger)
     end
   end
 end
